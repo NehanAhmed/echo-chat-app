@@ -1,0 +1,20 @@
+<!-- test.html in root, open in browser -->
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script>
+  const socket = io("http://localhost:5000");
+
+  socket.on("connect", () => {
+    console.log("Connected:", socket.id);
+    socket.emit("joinRoom", { roomId: "room1", displayName: "Nehan" });
+  });
+
+  socket.on("message", (data) => {
+    console.log("Message received:", data);
+  });
+
+  socket.emit("sendMessage", {
+    roomId: "room1",
+    content: "Hello Echo!",
+    displayName: "Nehan",
+  });
+</script>
