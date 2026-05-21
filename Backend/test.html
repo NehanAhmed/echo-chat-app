@@ -1,5 +1,11 @@
-<!-- test.html in root, open in browser -->
-<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Echo Chat Test</title>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
 <script>
   const socket = io("http://localhost:5000");
 
@@ -8,13 +14,17 @@
     socket.emit("joinRoom", { roomId: "room1", displayName: "Nehan" });
   });
 
+  socket.on("messageHistory", () => {
+    socket.emit("sendMessage", {
+      roomId: "room1",
+      content: "Hello Echo!",
+      displayName: "Nehan",
+    });
+  });
+
   socket.on("message", (data) => {
     console.log("Message received:", data);
   });
-
-  socket.emit("sendMessage", {
-    roomId: "room1",
-    content: "Hello Echo!",
-    displayName: "Nehan",
-  });
 </script>
+</body>
+</html>

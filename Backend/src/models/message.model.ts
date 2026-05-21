@@ -34,5 +34,6 @@ const messageSchema = new mongoose.Schema<IMessage>(
 
 
 messageSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+messageSchema.index({ roomId: 1, createdAt: -1 });
 
 export const Message = mongoose.model<IMessage>("Message", messageSchema);

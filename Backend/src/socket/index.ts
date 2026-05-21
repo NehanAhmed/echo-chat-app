@@ -10,6 +10,10 @@ import {
 import { Message } from "../models/message.model";
 import { Room } from "../models/room.model";
 
+const MESSAGE_HISTORY_LIMIT = 100;
+const MAX_MESSAGE_LENGTH = 5000;
+const MAX_DISPLAY_NAME_LENGTH = 30;
+
 export const initSocket = (httpServer: HttpServer) => {
   const io = new Server<ClientToServerEvents, ServerToClientEvents, {}, SocketData>(
     httpServer,
@@ -27,6 +31,13 @@ export const initSocket = (httpServer: HttpServer) => {
     // --- JOIN ROOM ---
     socket.on("joinRoom", async ({ roomId, displayName }) => {
       try {
+        // Validate displayName
+        const trimmedName = displayName?.trim();
+        if (!trimmedName || trimmedName.length > MAX_DISPLAY_NAME_LENGTH) {
+          socket.emit("error", `Display name must be between 1 and ${MAX_DISPLAY_NAME_LENGTH} characters`);
+          return;
+        }
+
         // Validate roomId is a valid MongoDB ObjectId
         if (!mongoose.Types.ObjectId.isValid(roomId)) {
           socket.emit("error", "Invalid room ID");
@@ -41,13 +52,14 @@ export const initSocket = (httpServer: HttpServer) => {
         }
 
         socket.join(roomId);
-        socket.data.displayName = displayName;
+        socket.data.displayName = trimmedName;
         socket.data.roomId = roomId;
 
         // Fetch existing messages and send ONLY to this socket
         const messages = await Message.find({ roomId })
           .sort({ createdAt: 1 })
-          .lean(); // lean() returns plain JS objects, faster than full Mongoose docs
+          .limit(MESSAGE_HISTORY_LIMIT)
+          .lean();
 
         const history: MessagePayload[] = messages.map((msg) => ({
           id: msg._id.toString(),
@@ -72,6 +84,17 @@ export const initSocket = (httpServer: HttpServer) => {
     // --- SEND MESSAGE ---
     socket.on("sendMessage", async ({ roomId, content, displayName }) => {
       try {
+        // Validate content
+        const trimmedContent = content?.trim();
+        if (!trimmedContent) {
+          socket.emit("error", "Message content cannot be empty");
+          return;
+        }
+        if (trimmedContent.length > MAX_MESSAGE_LENGTH) {
+          socket.emit("error", `Message content exceeds maximum length of ${MAX_MESSAGE_LENGTH} characters`);
+          return;
+        }
+
         if (!mongoose.Types.ObjectId.isValid(roomId)) {
           socket.emit("error", "Invalid room ID");
           return;
@@ -88,8 +111,8 @@ export const initSocket = (httpServer: HttpServer) => {
         const savedMessage = await Message.create({
           roomId,
           displayName,
-          content,
-          expiresAt: room.expiresAt, // message expires when room expires
+          content: trimmedContent,
+          expiresAt: room.expiresAt,
         });
 
         const messagePayload: MessagePayload = {
@@ -112,7 +135,9 @@ export const initSocket = (httpServer: HttpServer) => {
     socket.on("leaveRoom", (roomId) => {
       socket.leave(roomId);
       const displayName = socket.data.displayName;
-      socket.to(roomId).emit("userLeft", { displayName, roomId });
+      if (displayName) {
+        socket.to(roomId).emit("userLeft", { displayName, roomId });
+      }
     });
 
     // --- DISCONNECT ---
