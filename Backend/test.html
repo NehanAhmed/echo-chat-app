@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Echo Chat Test</title>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+<script>
+  const socket = io("http://localhost:5000");
+
+  socket.on("connect", () => {
+    console.log("Connected:", socket.id);
+    socket.emit("joinRoom", { roomId: "room1", displayName: "Nehan" });
+  });
+
+  socket.on("messageHistory", () => {
+    socket.emit("sendMessage", {
+      roomId: "room1",
+      content: "Hello Echo!",
+      displayName: "Nehan",
+    });
+  });
+
+  socket.on("message", (data) => {
+    console.log("Message received:", data);
+  });
+</script>
+</body>
+</html>

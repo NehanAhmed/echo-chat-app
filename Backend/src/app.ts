@@ -1,11 +1,14 @@
 import express, { Application, Request, Response, NextFunction } from "express";
-
+import roomRouter from "./routes/room.route";
 
 const app: Application = express();
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Routes
+app.use("/api/room", roomRouter);
 
 // 404 handler
 app.use((_req: Request, res: Response) => {
