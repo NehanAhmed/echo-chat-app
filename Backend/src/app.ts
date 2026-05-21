@@ -1,14 +1,18 @@
 import express, { Application, Request, Response, NextFunction } from "express";
 import roomRouter from "./routes/room.route";
+import cors from "cors";
 
 const app: Application = express();
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors({
+  origin: process.env.CLIENT_URL || 'http://localhost:5173',
 
+}));
 // Routes
-app.use("/api/room", roomRouter);
+app.use("/api/rooms", roomRouter);
 
 // 404 handler
 app.use((_req: Request, res: Response) => {
