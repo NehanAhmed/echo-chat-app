@@ -1,6 +1,6 @@
 import express, { Application, Request, Response, NextFunction } from "express";
 import roomRouter from "./routes/room.route";
-import cors from "cors";
+import cors from 'cors'
 
 const app: Application = express();
 
