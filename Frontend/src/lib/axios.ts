@@ -1,0 +1,18 @@
+// lib/axios.ts
+import axios from "axios";
+
+export const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+// Global error interceptor
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const message = error.response?.data?.message || "Something went wrong";
+    return Promise.reject(new Error(message));
+  }
+);
