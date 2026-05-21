@@ -6,7 +6,7 @@ Before any frontend/UI work, read DESIGN.md first — it defines the design syst
 
 ## Structure
 
-```
+```text
 echo-chat-app/
 ├── Backend/          # Express 5 + Socket.IO + Mongoose
 │   └── src/

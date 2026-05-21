@@ -32,7 +32,7 @@ Echo Chat is a **real-time messaging platform** that lets users create temporary
 
 ## Features
 
-- **Create & join rooms** — RESTful endpoints to create new rooms (`POST /api/room/create`) and join them via WebSocket using a valid MongoDB ObjectId.
+- **Create & join rooms** — RESTful endpoints to create new rooms (`POST /api/rooms`) and join them via WebSocket using a valid MongoDB ObjectId.
 - **Live messaging** — Messages are persisted to MongoDB and broadcast to all room participants in real time.
 - **Room expiry** — Rooms and their messages are automatically cleaned up after 24 hours via MongoDB TTL indexes.
 - **Message history** — On joining a room, the last 100 messages are served as history (configurable via `MESSAGE_HISTORY_LIMIT`).
@@ -59,7 +59,7 @@ Echo Chat is a **real-time messaging platform** that lets users create temporary
 
 - Node.js >= 18
 - MongoDB instance (local or Atlas)
-- pnpm (recommended) or npm
+- pnpm
 
 ### Backend Setup
 
@@ -100,7 +100,7 @@ cd Frontend && pnpm dev
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `POST` | `/api/room/create` | Create a new chat room (body: `{ name, createdBy }`) |
+| `POST` | `/api/rooms` | Create a new chat room (body: `{ name, createdBy }`) |
 
 ### WebSocket Events
 
@@ -120,7 +120,7 @@ cd Frontend && pnpm dev
 
 ## Project Structure
 
-```
+```text
 echo-chat-app/
 ├── Backend/
 │   ├── src/
