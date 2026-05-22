@@ -38,10 +38,14 @@ function ChatRoom() {
   const [copied, setCopied] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
-  const copyRoomId = useCallback(() => {
+  const copyRoomId = useCallback(async () => {
     if (!roomId) return
-    navigator.clipboard.writeText(roomId)
-    setCopied(true)
+    try {
+      await navigator.clipboard.writeText(roomId)
+      setCopied(true)
+    } catch (err) {
+      console.error("Failed to copy room ID:", err)
+    }
     setTimeout(() => setCopied(false), 1500)
   }, [roomId])
 
@@ -226,7 +230,7 @@ function ChatRoom() {
             >
               <HugeiconsIcon icon={Menu01Icon} size={14} />
             </Button>
-            <Button variant="ghost" size="icon-xs" onClick={() => navigate("/")}>
+            <Button variant="ghost" size="icon-xs" onClick={() => navigate("/")} aria-label="Back">
               <HugeiconsIcon icon={ArrowLeft01Icon} size={14} />
             </Button>
             <span className="h-3.5 w-px bg-border" />

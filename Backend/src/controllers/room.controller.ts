@@ -20,18 +20,29 @@ export const createRoom = async (
       return;
     }
 
-    let roomId: string
-    let existing
-    do {
-      roomId = generateRoomId()
-      existing = await Room.findById(roomId).lean()
-    } while (existing)
-
-    const room = await Room.create({
-      _id: roomId,
-      name: name.trim(),
-      createdBy: createdBy.trim(),
-    });
+    const MAX_RETRIES = 5
+    let room
+    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+      const roomId = generateRoomId()
+      try {
+        room = await Room.create({
+          _id: roomId,
+          name: name.trim(),
+          createdBy: createdBy.trim(),
+        })
+        break
+      } catch (err: unknown) {
+        const mongoErr = err as { code?: number; name?: string }
+        if (mongoErr.code === 11000 || mongoErr.name === "MongoServerError") {
+          if (attempt === MAX_RETRIES - 1) {
+            res.status(500).json({ success: false, message: "Failed to create room after retries" })
+            return
+          }
+          continue
+        }
+        throw err
+      }
+    }
 
     res.status(201).json({ success: true, data: room });
   } catch (error) {

@@ -1,4 +1,5 @@
 import { useState } from "react"
+import type { FormEvent } from "react"
 import { motion } from "motion/react"
 import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
@@ -13,7 +14,7 @@ export default function CreateRoom() {
   const [createdBy, setCreatedBy] = useState("")
   const [validationError, setValidationError] = useState("")
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setValidationError("")
 

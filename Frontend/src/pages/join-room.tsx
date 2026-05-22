@@ -22,13 +22,18 @@ export default function JoinRoom() {
     e.preventDefault()
     setError("")
 
-    const fullId = roomId.length === 6 ? `${roomId.slice(0, 3)}-${roomId.slice(3)}` : roomId
     const trimmedName = displayName.trim()
 
-    if (!fullId || !trimmedName) {
+    if (roomId.length !== 6) {
+      setError("Room ID must be 6 characters")
+      return
+    }
+    if (!trimmedName) {
       setError("Both fields are required")
       return
     }
+
+    const fullId = `${roomId.slice(0, 3)}-${roomId.slice(3)}`
     if (trimmedName.length < 2) {
       setError("Display name must be at least 2 characters")
       return

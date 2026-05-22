@@ -12,7 +12,7 @@ import { Room } from "../models/room.model";
 const MESSAGE_HISTORY_LIMIT = 100;
 const MAX_MESSAGE_LENGTH = 5000;
 const MAX_DISPLAY_NAME_LENGTH = 30;
-const ROOM_ID_REGEX = /^[a-zA-Z0-9]{3}-[a-zA-Z0-9]{3}$/;
+const ROOM_ID_REGEX = /^[A-HJ-NP-Za-hj-np-z2-9]{3}-[A-HJ-NP-Za-hj-np-z2-9]{3}$/;
 
 export const initSocket = (httpServer: HttpServer) => {
   const io = new Server<ClientToServerEvents, ServerToClientEvents, {}, SocketData>(
