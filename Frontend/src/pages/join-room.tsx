@@ -4,6 +4,12 @@ import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+  InputOTPSeparator,
+} from "@/components/ui/input-otp"
 
 export default function JoinRoom() {
   const navigate = useNavigate()
@@ -16,25 +22,30 @@ export default function JoinRoom() {
     e.preventDefault()
     setError("")
 
-    const trimmedId = roomId.trim()
     const trimmedName = displayName.trim()
 
-    if (!trimmedId || !trimmedName) {
+    if (roomId.length !== 6) {
+      setError("Room ID must be 6 characters")
+      return
+    }
+    if (!trimmedName) {
       setError("Both fields are required")
       return
     }
+
+    const fullId = `${roomId.slice(0, 3)}-${roomId.slice(3)}`
     if (trimmedName.length < 2) {
       setError("Display name must be at least 2 characters")
       return
     }
 
     setIsJoining(true)
-    navigate(`/room/${encodeURIComponent(trimmedId)}?name=${encodeURIComponent(trimmedName)}`)
+    navigate(`/room/${encodeURIComponent(fullId)}?name=${encodeURIComponent(trimmedName)}`)
   }
 
   return (
-    <main className="flex min-h-dvh items-center justify-center px-6">
-      <div className="flex flex-col items-center text-center">
+    <main className="flex min-h-dvh items-center justify-center px-4 sm:px-6">
+      <div className="flex w-full flex-col items-center text-center">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -67,7 +78,7 @@ export default function JoinRoom() {
             ease: [0.22, 1, 0.36, 1],
             delay: 0.1,
           }}
-          className="mt-6 font-heading text-2xl/tight font-semibold tracking-tight"
+          className="mt-6 font-heading text-xl/tight font-semibold tracking-tight sm:text-2xl/tight"
         >
           Join room
         </motion.h1>
@@ -97,16 +108,31 @@ export default function JoinRoom() {
               ease: [0.22, 1, 0.36, 1],
               delay: 0.2,
             }}
-            className="space-y-1.5"
+            className="space-y-3"
           >
             <Label htmlFor="room-id">Room ID</Label>
-            <Input
-              id="room-id"
-              placeholder="e.g. abc123"
+            <div className="flex justify-center sm:justify-start">
+            <InputOTP
+              maxLength={6}
+              pattern="^[a-zA-Z0-9]+$"
               value={roomId}
-              onChange={(e) => setRoomId(e.target.value)}
+              onChange={setRoomId}
               disabled={isJoining}
-            />
+              id="room-id"
+            >
+              <InputOTPGroup>
+                <InputOTPSlot index={0} />
+                <InputOTPSlot index={1} />
+                <InputOTPSlot index={2} />
+              </InputOTPGroup>
+              <InputOTPSeparator />
+              <InputOTPGroup>
+                <InputOTPSlot index={3} />
+                <InputOTPSlot index={4} />
+                <InputOTPSlot index={5} />
+              </InputOTPGroup>
+            </InputOTP>
+            </div>
           </motion.div>
 
           <motion.div
@@ -153,7 +179,7 @@ export default function JoinRoom() {
               whileHover={{ y: -1 }}
               transition={{ duration: 0.15 }}
             >
-              <Button size="lg" className="text-sm" disabled={isJoining}>
+              <Button size="lg" className="w-full text-sm sm:w-auto" disabled={isJoining}>
                 {isJoining ? "Joining..." : "Join room"}
               </Button>
             </motion.div>

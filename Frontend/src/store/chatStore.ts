@@ -1,5 +1,6 @@
 import type { MessagePayload } from "@/types/socket.types";
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface chatState {
      // State
@@ -33,30 +34,41 @@ const initialState = {
   error: null,
 };
 
-export const useChatStore = create<chatState>((set) => ({
-  ...initialState,
+export const useChatStore = create<chatState>()(
+  persist(
+    (set) => ({
+      ...initialState,
 
-  setRoom: (roomId, displayName) => set({ roomId, displayName }),
-  setConnected: (status) => set({ isConnected: status }),
-  setJoining: (status) => set({ isJoining: status }),
-  setError: (error) => set({ error }),
+      setRoom: (roomId, displayName) => set({ roomId, displayName }),
+      setConnected: (status) => set({ isConnected: status }),
+      setJoining: (status) => set({ isJoining: status }),
+      setError: (error) => set({ error }),
 
-  // Replaces all messages — used when history loads on join
-  setMessageHistory: (messages) => set({ messages }),
+      // Replaces all messages — used when history loads on join
+      setMessageHistory: (messages) => set({ messages }),
 
-  // Appends single new message
-  addMessage: (message) =>
-    set((state) => ({ messages: [...state.messages, message] })),
+      // Appends single new message
+      addMessage: (message) =>
+        set((state) => ({ messages: [...state.messages, message] })),
 
-  addUser: (displayName) =>
-    set((state) => ({
-      onlineUsers: [...state.onlineUsers, displayName],
-    })),
+      addUser: (displayName) =>
+        set((state) => ({
+          onlineUsers: [...state.onlineUsers, displayName],
+        })),
 
-  removeUser: (displayName) =>
-    set((state) => ({
-      onlineUsers: state.onlineUsers.filter((u) => u !== displayName),
-    })),
+      removeUser: (displayName) =>
+        set((state) => ({
+          onlineUsers: state.onlineUsers.filter((u) => u !== displayName),
+        })),
 
-  reset: () => set(initialState),
-}));
+      reset: () => set(initialState),
+    }),
+    {
+      name: "echo-chat-store",
+      partialize: (state) => ({
+        roomId: state.roomId,
+        displayName: state.displayName,
+      }),
+    },
+  ),
+);

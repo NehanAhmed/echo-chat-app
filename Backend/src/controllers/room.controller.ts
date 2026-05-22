@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { IRoom, Room } from "../models/room.model";
 import { ApiResponse } from "../types/api.types";
+import { generateRoomId } from "../utils/generateRoomId";
 
 interface CreateRoomRequest {
   name: string;
@@ -19,10 +20,29 @@ export const createRoom = async (
       return;
     }
 
-    const room = await Room.create({
-      name: name.trim(),
-      createdBy: createdBy.trim(),
-    });
+    const MAX_RETRIES = 5
+    let room
+    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+      const roomId = generateRoomId()
+      try {
+        room = await Room.create({
+          _id: roomId,
+          name: name.trim(),
+          createdBy: createdBy.trim(),
+        })
+        break
+      } catch (err: unknown) {
+        const mongoErr = err as { code?: number; name?: string }
+        if (mongoErr.code === 11000 || mongoErr.name === "MongoServerError") {
+          if (attempt === MAX_RETRIES - 1) {
+            res.status(500).json({ success: false, message: "Failed to create room after retries" })
+            return
+          }
+          continue
+        }
+        throw err
+      }
+    }
 
     res.status(201).json({ success: true, data: room });
   } catch (error) {

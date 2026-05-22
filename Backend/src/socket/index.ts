@@ -1,6 +1,5 @@
 import { Server } from "socket.io";
 import { Server as HttpServer } from "http";
-import mongoose from "mongoose";
 import {
   ServerToClientEvents,
   ClientToServerEvents,
@@ -13,6 +12,7 @@ import { Room } from "../models/room.model";
 const MESSAGE_HISTORY_LIMIT = 100;
 const MAX_MESSAGE_LENGTH = 5000;
 const MAX_DISPLAY_NAME_LENGTH = 30;
+const ROOM_ID_REGEX = /^[A-HJ-NP-Za-hj-np-z2-9]{3}-[A-HJ-NP-Za-hj-np-z2-9]{3}$/;
 
 export const initSocket = (httpServer: HttpServer) => {
   const io = new Server<ClientToServerEvents, ServerToClientEvents, {}, SocketData>(
@@ -38,8 +38,8 @@ export const initSocket = (httpServer: HttpServer) => {
           return;
         }
 
-        // Validate roomId is a valid MongoDB ObjectId
-        if (!mongoose.Types.ObjectId.isValid(roomId)) {
+        // Validate roomId format
+        if (!ROOM_ID_REGEX.test(roomId)) {
           socket.emit("error", "Invalid room ID");
           return;
         }
@@ -65,7 +65,7 @@ export const initSocket = (httpServer: HttpServer) => {
           id: msg._id.toString(),
           displayName: msg.displayName,
           content: msg.content,
-          roomId: msg.roomId.toString(),
+          roomId: msg.roomId,
           createdAt: msg.createdAt.toISOString(),
         }));
 
@@ -95,7 +95,7 @@ export const initSocket = (httpServer: HttpServer) => {
           return;
         }
 
-        if (!mongoose.Types.ObjectId.isValid(roomId)) {
+        if (!ROOM_ID_REGEX.test(roomId)) {
           socket.emit("error", "Invalid room ID");
           return;
         }

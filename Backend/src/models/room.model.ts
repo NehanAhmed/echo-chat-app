@@ -2,6 +2,7 @@
 import mongoose from "mongoose";
 
 export interface IRoom {
+  _id: string;
   name: string;
   createdBy: string;
   expiresAt: Date;
@@ -9,6 +10,10 @@ export interface IRoom {
 
 const roomSchema = new mongoose.Schema<IRoom>(
   {
+    _id: {
+      type: String,
+      required: true,
+    },
     name: {
       type: String,
       required: true,
