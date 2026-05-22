@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://echochat.app/sitemap.xml
