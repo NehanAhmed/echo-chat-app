@@ -169,6 +169,7 @@ export const initSocket = (httpServer: HttpServer) => {
     // --- DISCONNECT ---
     socket.on("disconnect", () => {
       const { displayName, roomId } = socket.data;
+      rateLimitMap.delete(socket.id)
 
       if (roomId && displayName) {
         socket.to(roomId).emit("userLeft", { displayName, roomId });

@@ -11,7 +11,7 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["*.png", "*.ico", "manifest.json"],
+      includeAssets: ["*.png", "*.ico"],
       manifest: {
         name: "Echo Chat",
         short_name: "Echo Chat",

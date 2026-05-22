@@ -7,8 +7,8 @@ Comprehensive quality review based on Google Lighthouse audit standards. Covers 
 ## Critical issues (2 found)
 
 - **[Best Practices/Security] MongoDB credentials hardcoded in `.env`.** File: `Backend/.env:4`
-  - **Impact:** Exposed `mongodb+srv://nehan-user:M6xZOiwO2chonqZn@cluster0...` — full read/write access to the database if committed or leaked.
-  - **Fix:** Use environment variables only at deploy-time (e.g., CI secrets, Docker env). Ensure `.env` stays in `.gitignore` (it is). Rotate the exposed password immediately.
+  - **Impact:** Exposed `mongodb+srv://<REDACTED_USER>:<REDACTED_PASS>@<REDACTED_HOST>/echo-chat-app` — full read/write access to the database if committed or leaked.
+  - **Fix:** Use environment variables only at deploy-time (e.g., CI secrets, Docker env). Ensure `.env` stays in `.gitignore` (it is). **If the above string was ever real, rotate the credential immediately.**
 
 - **[Best Practices/Security] No Content Security Policy (CSP) headers.** File: `Backend/src/app.ts:10`
   - **Impact:** No XSS protection — inline scripts and unauthorized origins can execute in the browser.
@@ -51,8 +51,8 @@ Comprehensive quality review based on Google Lighthouse audit standards. Covers 
     <link rel="preload" href="/node_modules/@fontsource-variable/dm-sans/files/dm-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
     ```
 
-- **[Accessibility] Home page missing `<h1>` heading.** File: `Frontend/src/pages/home.tsx:17`
-  - **Impact:** Screen readers have no landmark heading. The page fails heading hierarchy (WCAG 1.3.1). Hurts SEO.
+- **[Accessibility] Home page missing `<h1>` heading (Join Room and Create Room pages do include one).** File: `Frontend/src/pages/home.tsx:17`
+  - **Impact:** Screen readers have no landmark heading on the landing page. The page fails heading hierarchy (WCAG 1.3.1). Hurts SEO.
   - **Fix:** Wrap the tagline in `<h1>` (styled to match current appearance):
     ```tsx
     <motion.h1
@@ -105,7 +105,7 @@ Comprehensive quality review based on Google Lighthouse audit standards. Covers 
 
 ---
 
-## Medium priority (8 found)
+## Medium priority (7 found)
 
 - **[SEO] Missing `robots.txt` and XML sitemap.**
   - **Impact:** Search crawlers have no guidance. Client-rendered SPA pages may not be indexed properly.
@@ -122,10 +122,6 @@ Comprehensive quality review based on Google Lighthouse audit standards. Covers 
     ```html
     <title>Echo Chat — Ephemeral Real-Time Messaging</title>
     ```
-
-- **[Accessibility] No `<h1>` on Join Room and Create Room pages have `<h1>` — inconsistent.** File: `Frontend/src/pages/home.tsx`
-  - **Impact:** Home (landing page) has no `<h1>` while child pages do. Breaks expected heading hierarchy.
-  - **Fix:** Add `<h1>` to home page as noted above.
 
 - **[Performance] No resource hints (preconnect/preload).** File: `Frontend/index.html`
   - **Impact:** Socket server connection and API calls are delayed by DNS/TCP/TLS negotiation.
@@ -181,11 +177,7 @@ Comprehensive quality review based on Google Lighthouse audit standards. Covers 
 ## Low priority (4 found)
 
 - **[Performance] SVG logo (react.svg) in assets is unused.** File: `Frontend/src/assets/react.svg`
-  - **Impact:** Bloat in the repo. Not imported anywhere.
-  - **Fix:** Delete the file.
-
-- **[Performance] `logo.png` has no explicit dimensions in HTML.** File: `Frontend/src/components/logo.tsx:7`
-  - **Impact:** Without `width`/`height`, the browser cannot reserve space. Can cause CLS as the image loads.
+  - **Impact:** Bloat in the repo. Not importCLS as the image loads.
   - **Fix:** Add width/height attributes:
     ```tsx
     <motion.img
@@ -229,10 +221,10 @@ Comprehensive quality review based on Google Lighthouse audit standards. Covers 
 | Category | Issues | Critical | High | Medium | Low |
 |----------|--------|----------|------|--------|-----|
 | Performance | 6 | 0 | 2 | 3 | 1 |
-| Accessibility | 4 | 0 | 2 | 1 | 1 |
-| SEO | 3 | 0 | 0 | 3 | 0 |
+| Accessibility | 3 | 0 | 2 | 0 | 1 |
+| SEO | 2 | 0 | 0 | 2 | 0 |
 | Best Practices | 7 | 2 | 2 | 2 | 1 |
-| **Total** | **20** | **2** | **6** | **8** | **4** |
+| **Total** | **18** | **2** | **6** | **7** | **3** |
 
 ## Recommended priority
 

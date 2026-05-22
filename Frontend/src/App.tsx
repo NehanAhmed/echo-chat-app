@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from "react-router"
+import { Routes, Route, useLocation } from "react-router-dom"
 import Home from "./pages/home"
 import CreateRoom from "./pages/create-room"
 import JoinRoom from "./pages/join-room"
