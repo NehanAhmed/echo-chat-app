@@ -5,6 +5,8 @@ const Logo = ({ className }: { className?: string }) => {
     <motion.img
       src="/logo.png"
       alt="Echo Chat"
+      width={512}
+      height={512}
       className={className}
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}

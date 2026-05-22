@@ -89,7 +89,7 @@ function ChatRoom() {
 
   if (!roomId || !displayName) {
     return (
-      <main className="flex min-h-dvh items-center justify-center px-6">
+      <main id="main-content" className="flex min-h-dvh items-center justify-center px-6">
         <div className="flex flex-col items-center text-center">
           <p className="text-sm text-muted-foreground">Missing room information.</p>
           <Link
@@ -104,7 +104,7 @@ function ChatRoom() {
   }
 
   return (
-    <main className="flex h-dvh">
+    <main id="main-content" className="flex h-dvh">
       {/* Mobile sidebar backdrop */}
       <AnimatePresence>
         {sidebarOpen && (
@@ -155,7 +155,7 @@ function ChatRoom() {
             <div className="space-y-0.5 pr-3">
               <div className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-sidebar-accent">
                 <Avatar size="sm" className="shrink-0">
-                  <AvatarFallback className="bg-sidebar-primary text-sidebar-primary-foreground">
+                  <AvatarFallback aria-hidden="true" className="bg-sidebar-primary text-sidebar-primary-foreground">
                     {displayName[0].toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
@@ -175,7 +175,7 @@ function ChatRoom() {
                   className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-sidebar-accent"
                 >
                   <Avatar size="sm" className="shrink-0">
-                    <AvatarFallback>
+                    <AvatarFallback aria-hidden="true">
                       {user[0].toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
@@ -300,7 +300,7 @@ function ChatRoom() {
                     className={`flex items-start gap-2.5 ${isOwn ? "flex-row-reverse" : ""}`}
                   >
                     <Avatar size="sm" className="mt-0.5 shrink-0">
-                      <AvatarFallback>{msg.displayName[0].toUpperCase()}</AvatarFallback>
+                      <AvatarFallback aria-hidden="true">{msg.displayName[0].toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <div className={`flex max-w-[75%] flex-col sm:max-w-[70%] ${isOwn ? "items-end" : ""}`}>
                       <div className="flex items-baseline gap-2">

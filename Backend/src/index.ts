@@ -14,7 +14,9 @@ const start = async () => {
   initSocket(httpServer);
 
   httpServer.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    if (process.env.NODE_ENV !== "production") {
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
+    }
   });
 };
 

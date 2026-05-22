@@ -6,7 +6,7 @@ import RoomSessionCard from "@/components/room-session-card"
 
 export default function Home() {
   return (
-    <main className="flex flex-col px-6">
+    <main id="main-content" className="flex flex-col px-6">
       <div className="flex min-h-dvh flex-col items-center justify-center">
         <motion.div
           initial={{ scaleX: 0 }}
@@ -17,7 +17,7 @@ export default function Home() {
 
         <Logo className="h-24 w-auto sm:h-34" />
 
-        <motion.p
+        <motion.h1
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{
@@ -28,7 +28,7 @@ export default function Home() {
           className="mt-6 max-w-xs px-4 text-center text-sm leading-relaxed text-muted-foreground sm:max-w-sm"
         >
           Real-time conversations that disappear without a trace.
-        </motion.p>
+        </motion.h1>
 
         <motion.div
           initial={{ opacity: 0, y: 16 }}

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useCreateRoom } from "@/hooks/useRoom"
+import { roomCreateSchema } from "@/types/room.types"
 
 export default function CreateRoom() {
   const navigate = useNavigate()
@@ -21,12 +22,9 @@ export default function CreateRoom() {
     const trimmedName = name.trim()
     const trimmedCreatedBy = createdBy.trim()
 
-    if (!trimmedName || !trimmedCreatedBy) {
-      setValidationError("Both fields are required")
-      return
-    }
-    if (trimmedName.length < 2 || trimmedCreatedBy.length < 2) {
-      setValidationError("Each field must be at least 2 characters")
+    const result = roomCreateSchema.safeParse({ name: trimmedName, createdBy: trimmedCreatedBy })
+    if (!result.success) {
+      setValidationError(result.error.issues[0].message)
       return
     }
 
@@ -34,15 +32,15 @@ export default function CreateRoom() {
       const res = await mutateAsync({ name: trimmedName, createdBy: trimmedCreatedBy })
       const roomId = res.data._id as string
       navigate(`/room/${roomId}?name=${encodeURIComponent(trimmedCreatedBy)}`)
-    } catch {
-      // error is surfaced via the mutation's `error` state
+    } catch (err) {
+      console.error("Room creation failed:", err)
     }
   }
 
   const displayError = validationError || error?.message
 
   return (
-    <main className="flex min-h-dvh items-center justify-center px-4 sm:px-6">
+    <main id="main-content" className="flex min-h-dvh items-center justify-center px-4 sm:px-6">
       <div className="flex w-full flex-col items-center text-center">
         <motion.div
           initial={{ opacity: 0 }}

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "skills": {
+    "seo-aeo-best-practices": {
+      "source": "sanity-io/agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "skills/seo-aeo-best-practices/SKILL.md",
+      "computedHash": "21d5865242c9939ee524ec0cc396c3098ccd7eac846ca9e043789beef22c9c25"
+    },
+    "web-quality-audit": {
+      "source": "addyosmani/web-quality-skills",
+      "sourceType": "github",
+      "skillPath": "skills/web-quality-audit/SKILL.md",
+      "computedHash": "b39c62f24e6eea1ffb517924b738f052f3888f32a8a5ca3cf348c1b33aeea291"
+    }
+  }
+}

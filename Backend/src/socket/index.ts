@@ -13,6 +13,20 @@ const MESSAGE_HISTORY_LIMIT = 100;
 const MAX_MESSAGE_LENGTH = 5000;
 const MAX_DISPLAY_NAME_LENGTH = 30;
 const ROOM_ID_REGEX = /^[A-HJ-NP-Za-hj-np-z2-9]{3}-[A-HJ-NP-Za-hj-np-z2-9]{3}$/;
+const RATE_LIMIT_MESSAGES = 10;
+const RATE_LIMIT_WINDOW_MS = 1000;
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+
+function checkRateLimit(socketId: string): boolean {
+  const now = Date.now()
+  let entry = rateLimitMap.get(socketId)
+  if (!entry || now > entry.resetAt) {
+    entry = { count: 0, resetAt: now + RATE_LIMIT_WINDOW_MS }
+    rateLimitMap.set(socketId, entry)
+  }
+  entry.count++
+  return entry.count <= RATE_LIMIT_MESSAGES
+}
 
 export const initSocket = (httpServer: HttpServer) => {
   const io = new Server<ClientToServerEvents, ServerToClientEvents, {}, SocketData>(
@@ -26,10 +40,16 @@ export const initSocket = (httpServer: HttpServer) => {
   );
 
   io.on("connection", (socket) => {
-    console.log(`✅ Socket connected: ${socket.id}`);
+    if (process.env.NODE_ENV !== "production") {
+      console.log(`✅ Socket connected: ${socket.id}`);
+    }
 
     // --- JOIN ROOM ---
     socket.on("joinRoom", async ({ roomId, displayName }) => {
+      if (!checkRateLimit(socket.id)) {
+        socket.emit("error", "Rate limited. Please slow down.");
+        return
+      }
       try {
         // Validate displayName
         const trimmedName = displayName?.trim();
@@ -74,7 +94,9 @@ export const initSocket = (httpServer: HttpServer) => {
         // Notify everyone else in room
         socket.to(roomId).emit("userJoined", { displayName, roomId });
 
-        console.log(`${displayName} joined room ${roomId}`);
+        if (process.env.NODE_ENV !== "production") {
+          console.log(`${displayName} joined room ${roomId}`);
+        }
       } catch (err) {
         console.error("joinRoom error:", err);
         socket.emit("error", "Failed to join room");
@@ -83,6 +105,10 @@ export const initSocket = (httpServer: HttpServer) => {
 
     // --- SEND MESSAGE ---
     socket.on("sendMessage", async ({ roomId, content, displayName }) => {
+      if (!checkRateLimit(socket.id)) {
+        socket.emit("error", "Rate limited. Please slow down.");
+        return
+      }
       try {
         // Validate content
         const trimmedContent = content?.trim();
@@ -143,12 +169,15 @@ export const initSocket = (httpServer: HttpServer) => {
     // --- DISCONNECT ---
     socket.on("disconnect", () => {
       const { displayName, roomId } = socket.data;
+      rateLimitMap.delete(socket.id)
 
       if (roomId && displayName) {
         socket.to(roomId).emit("userLeft", { displayName, roomId });
       }
 
-      console.log(`❌ Socket disconnected: ${socket.id}`);
+      if (process.env.NODE_ENV !== "production") {
+        console.log(`❌ Socket disconnected: ${socket.id}`);
+      }
     });
   });
 

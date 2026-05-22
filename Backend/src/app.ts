@@ -1,10 +1,24 @@
 import express, { Application, Request, Response, NextFunction } from "express";
 import roomRouter from "./routes/room.route";
 import cors from 'cors'
+import helmet from "helmet"
 
 const app: Application = express();
 
 // Middleware
+app.use(helmet())
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      connectSrc: ["'self'", process.env.CLIENT_URL || "http://localhost:5173"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:"],
+      fontSrc: ["'self'"],
+    },
+  })
+)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({

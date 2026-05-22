@@ -44,7 +44,7 @@ export default function JoinRoom() {
   }
 
   return (
-    <main className="flex min-h-dvh items-center justify-center px-4 sm:px-6">
+    <main id="main-content" className="flex min-h-dvh items-center justify-center px-4 sm:px-6">
       <div className="flex w-full flex-col items-center text-center">
         <motion.div
           initial={{ opacity: 0 }}
