@@ -15,7 +15,7 @@ export default function Home() {
           className="h-px w-12 origin-center rounded-full bg-primary"
         />
 
-        <Logo />
+        <Logo className="h-24 w-auto sm:h-34" />
 
         <motion.p
           initial={{ opacity: 0, y: 16 }}
@@ -25,7 +25,7 @@ export default function Home() {
             ease: [0.22, 1, 0.36, 1],
             delay: 0.25,
           }}
-          className="mt-6 max-w-xs text-sm leading-relaxed text-muted-foreground"
+          className="mt-6 max-w-xs px-4 text-center text-sm leading-relaxed text-muted-foreground sm:max-w-sm"
         >
           Real-time conversations that disappear without a trace.
         </motion.p>
@@ -38,18 +38,18 @@ export default function Home() {
             ease: [0.22, 1, 0.36, 1],
             delay: 0.35,
           }}
-          className="mt-10 flex items-center gap-3"
+          className="mt-8 flex w-full max-w-xs flex-col items-stretch gap-3 sm:mt-10 sm:w-auto sm:flex-row sm:items-center"
         >
           <motion.div whileHover={{ y: -1 }} transition={{ duration: 0.15 }}>
-            <Link to="/create">
-              <Button size="lg" className="text-sm" asChild>
+            <Link to="/create" className="w-full sm:w-auto">
+              <Button size="lg" className="w-full text-sm sm:w-auto" asChild>
                 <span>Create room</span>
               </Button>
             </Link>
           </motion.div>
           <motion.div whileHover={{ y: -1 }} transition={{ duration: 0.15 }}>
-            <Link to="/join">
-              <Button variant="outline" size="lg" className="text-sm" asChild>
+            <Link to="/join" className="w-full sm:w-auto">
+              <Button variant="outline" size="lg" className="w-full text-sm sm:w-auto" asChild>
                 <span>Join room</span>
               </Button>
             </Link>

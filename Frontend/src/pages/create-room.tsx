@@ -41,8 +41,8 @@ export default function CreateRoom() {
   const displayError = validationError || error?.message
 
   return (
-    <main className="flex min-h-dvh items-center justify-center px-6">
-      <div className="flex flex-col items-center text-center">
+    <main className="flex min-h-dvh items-center justify-center px-4 sm:px-6">
+      <div className="flex w-full flex-col items-center text-center">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -75,7 +75,7 @@ export default function CreateRoom() {
             ease: [0.22, 1, 0.36, 1],
             delay: 0.1,
           }}
-          className="mt-6 font-heading text-2xl/tight font-semibold tracking-tight"
+          className="mt-6 font-heading text-xl/tight font-semibold tracking-tight sm:text-2xl/tight"
         >
           Create room
         </motion.h1>
@@ -161,7 +161,7 @@ export default function CreateRoom() {
               whileHover={{ y: -1 }}
               transition={{ duration: 0.15 }}
             >
-              <Button size="lg" className="text-sm" disabled={isPending}>
+              <Button size="lg" className="w-full text-sm sm:w-auto" disabled={isPending}>
                 {isPending ? "Creating..." : "Create room"}
               </Button>
             </motion.div>

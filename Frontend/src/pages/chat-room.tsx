@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from "react"
+import { useEffect, useRef, useCallback, useState } from "react"
 import { useParams, useSearchParams, Link, useNavigate } from "react-router-dom"
 import { motion, AnimatePresence } from "motion/react"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -7,6 +7,10 @@ import {
   Sun01Icon,
   Moon01Icon,
   UserGroupIcon,
+  Copy01Icon,
+  Tick01Icon,
+  ArrowLeft01Icon,
+  Menu01Icon,
 } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -31,6 +35,15 @@ function ChatRoom() {
   const { theme, setTheme } = useTheme()
   const viewportRef = useRef<HTMLDivElement>(null)
   const hasJoined = useRef(false)
+  const [copied, setCopied] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  const copyRoomId = useCallback(() => {
+    if (!roomId) return
+    navigator.clipboard.writeText(roomId)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1500)
+  }, [roomId])
 
   useSocket()
 
@@ -42,6 +55,7 @@ function ChatRoom() {
 
   const handleLeave = useCallback(() => {
     if (roomId) leaveRoom(roomId)
+    setSidebarOpen(false)
     navigate("/")
   }, [roomId, leaveRoom, navigate])
 
@@ -87,11 +101,32 @@ function ChatRoom() {
 
   return (
     <main className="flex h-dvh">
+      {/* Mobile sidebar backdrop */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="fixed inset-0 z-30 bg-black/20 md:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
       {/* Sidebar */}
-      <aside className="flex w-60 shrink-0 flex-col border-r border-sidebar-border bg-sidebar">
+      <aside
+        className={`
+          flex w-60 shrink-0 flex-col border-r border-sidebar-border bg-sidebar
+          fixed inset-y-0 left-0 z-40 transition-transform duration-200
+          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+          md:static md:z-auto md:translate-x-0
+        `}
+      >
         {/* Branding */}
-        <div className="flex items-center gap-2.5 px-5 pt-5 pb-4">
-          <Logo />
+        <div className="flex items-center justify-center">
+          <Logo className="h-24 w-auto sm:h-30" />
         </div>
 
         <div className="mx-5 h-px bg-sidebar-border" />
@@ -180,20 +215,38 @@ function ChatRoom() {
       {/* Main chat area */}
       <div className="flex flex-1 flex-col min-w-0">
         {/* Header */}
-        <header className="flex shrink-0 items-center justify-between border-b border-border px-6 py-3">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate("/")}
-              className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+        <header className="flex shrink-0 items-center justify-between border-b border-border px-4 py-3 sm:px-6">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              className="md:hidden"
+              onClick={() => setSidebarOpen(true)}
+              aria-label="Open sidebar"
             >
-              &larr;
-            </button>
+              <HugeiconsIcon icon={Menu01Icon} size={14} />
+            </Button>
+            <Button variant="ghost" size="icon-xs" onClick={() => navigate("/")}>
+              <HugeiconsIcon icon={ArrowLeft01Icon} size={14} />
+            </Button>
             <span className="h-3.5 w-px bg-border" />
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-medium text-foreground">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="truncate text-xs font-medium text-foreground">
                 {roomId}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2 py-0.5 text-[0.625rem] text-muted-foreground">
+              <Button
+                size="icon-xs"
+                variant="ghost"
+                onClick={copyRoomId}
+                className="shrink-0 text-muted-foreground hover:text-foreground"
+                aria-label={copied ? "Copied" : "Copy room ID"}
+              >
+                <HugeiconsIcon
+                  icon={copied ? Tick01Icon : Copy01Icon}
+                  size={12}
+                />
+              </Button>
+              <span className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-muted px-2 py-0.5 text-[0.625rem] text-muted-foreground">
                 <span
                   className={`inline-block size-1.5 rounded-full ${isConnected ? "bg-primary" : "bg-muted-foreground/40"}`}
                 />
@@ -210,7 +263,7 @@ function ChatRoom() {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="overflow-hidden border-b border-border bg-destructive/5 px-6"
+              className="overflow-hidden border-b border-border bg-destructive/5 px-4 sm:px-6"
             >
               <p className="py-2 text-xs text-destructive">{error}</p>
             </motion.div>
@@ -218,7 +271,7 @@ function ChatRoom() {
         </AnimatePresence>
 
         {/* Messages */}
-        <ScrollArea className="flex-1 px-6 py-4">
+        <ScrollArea className="flex-1 px-4 py-4 sm:px-6">
           <div ref={viewportRef} className="mx-auto max-w-2xl space-y-4">
             <AnimatePresence mode="popLayout">
               {messages.length === 0 && (
@@ -245,7 +298,7 @@ function ChatRoom() {
                     <Avatar size="sm" className="mt-0.5 shrink-0">
                       <AvatarFallback>{msg.displayName[0].toUpperCase()}</AvatarFallback>
                     </Avatar>
-                    <div className={`flex max-w-[70%] flex-col ${isOwn ? "items-end" : ""}`}>
+                    <div className={`flex max-w-[75%] flex-col sm:max-w-[70%] ${isOwn ? "items-end" : ""}`}>
                       <div className="flex items-baseline gap-2">
                         <span
                           className={`text-[0.625rem] font-medium ${isOwn ? "text-primary" : "text-foreground"}`}
@@ -278,7 +331,7 @@ function ChatRoom() {
         </ScrollArea>
 
         {/* Input bar */}
-        <div className="flex shrink-0 items-center gap-3 border-t border-border px-6 py-3">
+        <div className="flex shrink-0 items-center gap-2 border-t border-border px-4 py-3 sm:gap-3 sm:px-6">
           <Input
             placeholder="Type a message..."
             value={input}
