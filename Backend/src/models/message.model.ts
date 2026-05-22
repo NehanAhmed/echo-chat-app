@@ -2,7 +2,7 @@
 import mongoose from "mongoose";
 
 interface IMessage {
-  roomId: mongoose.Types.ObjectId;
+  roomId: string;
   displayName: string;
   content: string;
   expiresAt: Date;
@@ -12,8 +12,7 @@ interface IMessage {
 const messageSchema = new mongoose.Schema<IMessage>(
   {
     roomId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Room",
+      type: String,
       required: true,
     },
     displayName: {

@@ -182,16 +182,16 @@ function ChatRoom() {
         {/* Header */}
         <header className="flex shrink-0 items-center justify-between border-b border-border px-6 py-3">
           <div className="flex items-center gap-3">
-            <Link
-              to="/"
+            <button
+              onClick={() => navigate("/")}
               className="text-xs text-muted-foreground transition-colors hover:text-foreground"
             >
               &larr;
-            </Link>
+            </button>
             <span className="h-3.5 w-px bg-border" />
             <div className="flex items-center gap-2">
               <span className="text-xs font-medium text-foreground">
-                {roomId.slice(0, 8)}...
+                {roomId}
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2 py-0.5 text-[0.625rem] text-muted-foreground">
                 <span

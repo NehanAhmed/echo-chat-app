@@ -102,7 +102,7 @@ export default function JoinRoom() {
             <Label htmlFor="room-id">Room ID</Label>
             <Input
               id="room-id"
-              placeholder="e.g. abc123"
+              placeholder="e.g. Xk9-mP3"
               value={roomId}
               onChange={(e) => setRoomId(e.target.value)}
               disabled={isJoining}

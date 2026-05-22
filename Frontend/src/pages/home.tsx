@@ -2,11 +2,12 @@ import { motion } from "motion/react"
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import Logo from "@/components/logo"
+import RoomSessionCard from "@/components/room-session-card"
 
 export default function Home() {
   return (
-    <main className="flex min-h-dvh items-center justify-center px-6">
-      <div className="flex flex-col items-center text-center">
+    <main className="flex flex-col px-6">
+      <div className="flex min-h-dvh flex-col items-center justify-center">
         <motion.div
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
@@ -14,7 +15,7 @@ export default function Home() {
           className="h-px w-12 origin-center rounded-full bg-primary"
         />
 
-      <Logo />
+        <Logo />
 
         <motion.p
           initial={{ opacity: 0, y: 16 }}
@@ -54,7 +55,9 @@ export default function Home() {
             </Link>
           </motion.div>
         </motion.div>
+      <RoomSessionCard />
       </div>
+
     </main>
   )
 }

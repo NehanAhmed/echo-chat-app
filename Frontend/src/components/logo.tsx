@@ -2,7 +2,7 @@ import { motion } from 'motion/react'
 
 const Logo = () => {
   return (
-      <h1 className="mt-8 font-heading tracking-tight">
+      <h1 className="mt-8 font-heading tracking-tight text-center">
           <motion.span
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}

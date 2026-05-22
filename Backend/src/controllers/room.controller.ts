@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { IRoom, Room } from "../models/room.model";
 import { ApiResponse } from "../types/api.types";
+import { generateRoomId } from "../utils/generateRoomId";
 
 interface CreateRoomRequest {
   name: string;
@@ -19,7 +20,15 @@ export const createRoom = async (
       return;
     }
 
+    let roomId: string
+    let existing
+    do {
+      roomId = generateRoomId()
+      existing = await Room.findById(roomId).lean()
+    } while (existing)
+
     const room = await Room.create({
+      _id: roomId,
       name: name.trim(),
       createdBy: createdBy.trim(),
     });
